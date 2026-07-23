@@ -5,13 +5,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class Reservation {
-	
+
 	private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private Integer roomNumber;
 	private LocalDate checkIn;
 	private LocalDate checkOut;
-	
+
 	public Reservation() {
 	}
 
@@ -40,22 +40,24 @@ public class Reservation {
 	public long duration() {
 		return ChronoUnit.DAYS.between(checkIn, checkOut);
 	}
-	
-	public void updateDates(LocalDate checkIn, LocalDate checkOut) {
+
+	public String updateDates(LocalDate checkIn, LocalDate checkOut) {
+		LocalDate now = LocalDate.now();
+		if (checkIn.isBefore(now) || checkOut.isBefore(now)) {
+			return "Error in reservation: Reservation dates for update must be future dates";
+		} 
+		if (!checkOut.isAfter(checkIn)) {
+			return "Error in reservation: Check-out date must be after check-in date";
+		}
+
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+		return null;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Room "
-			+ roomNumber
-			+ ", check-in: "
-			+ FMT.format(checkIn)
-			+ ", check-out: "
-			+ FMT.format(checkOut)
-			+ ", "
-			+ duration()
-			+ " nights";
+		return "Room " + roomNumber + ", check-in: " + FMT.format(checkIn) + ", check-out: " + FMT.format(checkOut)
+				+ ", " + duration() + " nights";
 	}
 }
